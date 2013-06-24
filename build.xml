@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name=" bgcover plugin build and minifier" default="build">
+
+	<property name="OUT_FOLDER" value="dist" />
+
+	<taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask" classpath="libs/compiler.jar"/>
+
+    <target name="build">
+		<delete dir="${OUT_FOLDER}"/>
+		<mkdir dir="${OUT_FOLDER}"/>
+		<antcall target="compress">
+			<param name="FILE_OUT" value="jquery.oivavoi.bgcover.js" />
+			<param name="PRETTY_PRINT" value="true" />
+		</antcall>
+		<antcall target="compress">
+			<param name="FILE_OUT" value="jquery.oivavoi.bgcover.min.js" />
+			<param name="PRETTY_PRINT" value="false" />
+		</antcall>
+	</target>
+
+	<target name="compress">
+
+		<fileset id="externsFileset" dir="libs/compiler-externs" includes="*"/>
+		<pathconvert pathsep="," property="externsFiles" refid="externsFileset">
+			<mapper type="flatten" />
+		</pathconvert>
+
+		<echo message="externs: ${externsFiles}"/>
+		<echo message="${FILE_OUT}"/>
+		<echo message="${PRETTY_PRINT}"/>
+
+		<jscomp compilationLevel="simple" warning="default" debug="false" output="${OUT_FOLDER}/${FILE_OUT}" manageDependencies="true" prettyPrint="${PRETTY_PRINT}" printInputDelimiter="false" >
+			<sources dir="src">
+				<file name="jquery.oivavoi.bgcover.js"/>
+			</sources>
+			<externs dir="libs/compiler-externs" files="${externsFiles}"/>
+		</jscomp>
+
+	</target>
+
+</project>
